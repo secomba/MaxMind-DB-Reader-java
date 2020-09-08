@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,7 +74,12 @@ final class Decoder {
         this.buffer = buffer;
     }
 
-    private final NodeCache.Loader cacheLoader = this::decode;
+    private final NodeCache.Loader cacheLoader = new NodeCache.Loader() {
+        @Override
+        public JsonNode load(int key) throws IOException {
+            return decode(key);
+        }
+    };
 
     JsonNode decode(int offset) throws IOException {
         if (offset >= this.buffer.capacity()) {
